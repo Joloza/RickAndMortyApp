@@ -12,7 +12,9 @@ import {
     TextInput, 
     ImageBackground, 
     Image,
-    ToastAndroid
+    ToastAndroid,
+    Alert,
+    BackHandler
 } from 'react-native';
 import CharacterItem from '../globalComponents/CharacterItem';
 import ButtonExplorer from '../globalComponents/ButtonExplorer';
@@ -85,8 +87,28 @@ const HomeScreen = () => {
     useEffect(() => {  
         
         refreshFlatList();
+
+        const backAction = () => {
+            
+            Alert.alert("Salir", "¿Desea salir de la aplicación?", [
+                {
+                  text: "Cancelar",
+                  onPress: () => null,
+                  style: "cancel"
+                },
+                { text: "Si", onPress: () => BackHandler.exitApp() }
+            ]);
+            return true;
+            
+        };
+    
+        const backHandler = BackHandler.addEventListener(
+          "hardwareBackPress",
+          backAction
+        );
         
         return()=>{
+            backHandler.remove();
             setCharacters([]);
             setIsRefreshFlatlist(false);
             numberPage.current=1;

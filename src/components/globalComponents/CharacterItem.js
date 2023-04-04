@@ -51,8 +51,7 @@ const styles= StyleSheet.create({
         backgroundColor: colorApp.RickAndMortyGreenBlueOpaque,
     },
     imageStyle:{   
-        width: Dimensions.get('window').width/1.5,    
-        height: Dimensions.get('window').height/4,
+        width: (Dimensions.get('window').width-10)/1.5,    
         aspectRatio: 1.5, 
         resizeMode: 'contain',
         margin: 3,
