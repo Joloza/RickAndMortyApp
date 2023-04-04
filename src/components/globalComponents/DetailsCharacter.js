@@ -134,6 +134,7 @@ const styles=StyleSheet.create({
         marginTop:22,
     }, 
     imageStyle:{
+        width: Dimensions.get('window').width-40,
         height: Dimensions.get('window').height-400,
         padding: 15,
         aspectRatio: 1.5, 
