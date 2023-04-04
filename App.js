@@ -1,13 +1,15 @@
 import React from 'react';
 import {
-  SafeAreaView, View,
+  SafeAreaView,
 } from 'react-native';
+import HomeScreen from './src/components/screens/HomeScreen';
 
 const App = () => {
   
 
   return (
     <SafeAreaView style={{flex: 1}}>      
+      <HomeScreen/>
     </SafeAreaView>
   );
 };
