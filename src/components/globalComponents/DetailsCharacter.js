@@ -1,4 +1,6 @@
-import React, {useState} from "react";
+import React, {useState} from 'react';
+import colorApp from '../../res/colorApp';
+import noImage from '../../assets/noImage.png';
 import { 
     Modal, 
     Pressable, 
@@ -8,8 +10,7 @@ import {
     View,
     Image,
     Dimensions
-} from "react-native";
-import colorApp from "../../res/colorApp";
+} from 'react-native';
 
 const DetailsCharacter=({imageCharacter,name,status,species,gender,origin})=>{
 
@@ -20,10 +21,9 @@ const DetailsCharacter=({imageCharacter,name,status,species,gender,origin})=>{
     return(
 
         <View style={styles.container}>
-
-            <View style={styles.containerLink}>
+            <View style={styles.containerButtonModal}>
                 <Pressable
-                    style={{alignSelf: "center"}}
+                    style={styles.detailsButton}
                     onPress={()=>{
                         setIsModalVisible(true);
                         setIsPressModalExitButton(false);
@@ -33,7 +33,7 @@ const DetailsCharacter=({imageCharacter,name,status,species,gender,origin})=>{
                         
                 >                
                     <Text 
-                        style={[styles.textLink,{color: isPressDetails? colorApp.white : colorApp.apricot}]}>Ver más detalles</Text>
+                        style={[styles.textButtonModal,{color: isPressDetails? colorApp.blackPearl : colorApp.white}]}>Ver detalles</Text>
                 </Pressable>             
                 
             </View>
@@ -45,20 +45,28 @@ const DetailsCharacter=({imageCharacter,name,status,species,gender,origin})=>{
                     visible={isModalVisible}
                 >
                                     
-                    <View style={styles.containerTextModal}>
-                        <ScrollView>     
-                            <Image
-                                source = {imageCharacter ? {uri: imageCharacter} : null}
-                                style={styles.imageStyle}
-                            />  
-                            <Text>{name}</Text>
-                            <Text>{status}</Text>
-                            <Text>{species}</Text>
-                            <Text>{gender}</Text>
-                            <Text>{origin}</Text>
+                    <View style={styles.containerItemsModal}>
+                        <ScrollView> 
+                            <View style={styles.containerInformation}>
+                                <Image
+                                    source = {imageCharacter ? {uri: imageCharacter} : noImage}
+                                    style={styles.imageStyle}
+                                />  
+                                <Text style={styles.textInformationTitle}>Nombre:</Text>
+                                <Text style={styles.textInformation}>{name}</Text>
+                                <Text style={styles.textInformationTitle}>Estado:</Text>
+                                <Text style={styles.textInformation}>{status}</Text>
+                                <Text style={styles.textInformationTitle}>Especie</Text>
+                                <Text style={styles.textInformation}>{species}</Text>
+                                <Text style={styles.textInformationTitle}>Género</Text>
+                                <Text style={styles.textInformation}>{gender}</Text>
+                                <Text style={styles.textInformationTitle}>Origen</Text>
+                                <Text style={styles.textInformation}>{origin}</Text>
+                            </View>    
+                            
                         </ScrollView> 
                         <Pressable
-                            style={[styles.buttonCloseModal,{backgroundColor: isPressModalExitButton? colorApp.orange : colorApp.apricot}]}
+                            style={[styles.buttonCloseModal,{opacity: isPressModalExitButton? 0.5 : 1}]}
                             onPress={()=>setIsModalVisible(false)}   
                             onPressIn={()=>setIsPressModalExitButton(true)}
                             onPressOut={()=>setIsPressModalExitButton(false)} 
@@ -80,75 +88,81 @@ const DetailsCharacter=({imageCharacter,name,status,species,gender,origin})=>{
 }
 
 const styles=StyleSheet.create({
+    container: {
+        flex: 1,
+        flexDirection: 'column',
+        alignSelf: 'center',
+    },
+    containerButtonModal: { 
+        alignSelf: 'center',
+        flexDirection: 'column', 
+    },    
+    detailsButton:{
+        height: 40,
+        width: 120,
+        justifyContent: 'center',
+        backgroundColor: colorApp.RickAndMortyGreen,
+        borderRadius: 25,
+        padding: 10,
+        shadowColor: colorApp.blackPearl,
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    textButtonModal: {
+        textAlign: 'center',
+        alignSelf: 'center',
+        color: colorApp.white,
+        fontWeight: 'bold',
+        fontSize: 16
+    },
+    containerModal: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        
+    },
+    containerItemsModal: {
+        height: '90%',
+        backgroundColor: 'white',
+        borderRadius:20,
+        alignItems: 'center',
+        marginTop:22,
+    }, 
     imageStyle:{
-        //width: Dimensions.get('window').width-20,
         height: Dimensions.get('window').height-400,
         padding: 15,
         aspectRatio: 1.5, 
         resizeMode: 'contain',
         margin: 3,
-        alignSelf:"center",
+        alignSelf:'center',
         borderRadius: 5
-    },
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        alignSelf: 'center',
-        marginTop: 30,
-        marginBottom: 15,
-    },
-    containerLink: { 
-        flexDirection: 'row', 
-        alignSelf: "center", 
-        justifyContent: "center",
-        width: 150
-    },    
-    btnLogInText: {
-        justifyContent: "center",
-        color: colorApp.white,
-        textAlign: 'center',
-        fontSize: 16,
-        width: 25,
-        height: 25,
-        alignSelf: 'center',
-        margin: 5,        
-    },
-    radioButtonImage: {
-        width: 20,
-        height: 20,
-        opacity: 0.8,
-        alignSelf: "center"
-    },
-    radioButtonTextAccept: {
-        color: colorApp.white,
-        marginTop: 5,
-        marginBottom: 5,     
-        alignSelf: "center"
-    },
-    textLink: {
-        marginTop: 5,
-        marginBottom: 5,     
-        textAlign: "center"
-    },
-    containerModal: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        
-    },
-    containerTextModal: {
-        height: "90%",
-        backgroundColor: "white",
-        borderRadius:20,
-        alignItems: "center",
-        marginTop:22,
-    },      
-    modalText: {
-        margin: 15,
-        textAlign: 'left',
     }, 
+    containerInformation: {
+        flexDirection: 'column',
+        alignItems: 'center'
+    },
+    textInformationTitle: {
+        width: '80%',
+        textAlign: 'center',
+        fontWeight: 'bold',
+        color: colorApp.blackPearl,
+        fontSize: 18
+    },
+    textInformation: {
+        width: '80%',
+        textAlign: 'center',
+        color: colorApp.ligthGray,
+        fontSize: 16,
+        margin: 3
+    },
     buttonCloseModal: {
-        alignSelf: "flex-end",
+        backgroundColor: colorApp.RickAndMortyGreen,
+        alignSelf: 'center',
         margin: 10,
         borderRadius:20,
         padding: 10,
@@ -157,9 +171,9 @@ const styles=StyleSheet.create({
         width: 40,
     },
     buttonCloseText: {
-        color: "white",
-        fontWeight: "bold",
-        textAlign: "center"
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center'
     },   
 });
 

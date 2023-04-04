@@ -1,17 +1,41 @@
-import React,{useEffect,useState,useRef} from "react";
-import { Text, View, StyleSheet, Dimensions, FlatList, Pressable, TextInput } from "react-native"
-import { getAllCharacters, getCharacterByName } from "../../res/ApiServices";
-import colorApp from "../../res/colorApp";
-import CharacterItem from "../globalComponents/CharacterItem";
+import React,{useEffect,useState,useRef} from 'react';
+import { getAllCharacters, getCharacterByName } from '../../res/ApiServices';
+import colorApp from '../../res/colorApp';
+import backImage from '../../assets/backImage.jpg';
+import search from '../../assets/search.png';
+import titleImage from '../../assets/Rick-and-Morty.png';
+import { 
+    View, 
+    StyleSheet,
+    Dimensions, 
+    FlatList,  
+    TextInput, 
+    ImageBackground, 
+    Image,
+    ToastAndroid
+} from 'react-native';
+import CharacterItem from '../globalComponents/CharacterItem';
+import ButtonExplorer from '../globalComponents/ButtonExplorer';
+
 
 const HomeScreen = () => {
 
     const [characters,setCharacters]=useState([]);
     const [isRefreshFlatList,setIsRefreshFlatlist]=useState(false);
-    const [nameSearch,setNameSearch] =useState("");
+    const [nameSearch,setNameSearch] =useState('');
 
     const numberPage = useRef(1);
     const flatListLocation = useRef(null);
+
+    function toastAndroidMessage(message,xPosition,yPosition) {
+        return ToastAndroid.showWithGravityAndOffset(
+            message,
+            ToastAndroid.LONG,
+            ToastAndroid.BOTTOM,
+            xPosition,
+            yPosition,
+        );
+    };
 
     const loadDataApi=async()=>{
         let response=await getAllCharacters(numberPage.current);
@@ -19,6 +43,7 @@ const HomeScreen = () => {
             setCharacters(response);
             locationX();
         }else{
+            toastAndroidMessage('No hay mas páginas para ver',50,50);
             numberPage.current=numberPage.current-1;
         }
     }
@@ -40,16 +65,16 @@ const HomeScreen = () => {
         }        
     }
 
-    const filterCharacterByName=async(name)=>{
+    const filterCharacterByName=async(name,)=>{
         setNameSearch(name);
         let response=await getCharacterByName(name);
         if(response!='ERR_BAD_REQUEST'){
             setCharacters(response);
+            numberPage.current=1;
             locationX();
         }
     }
 
-    //---refresh flat lists---
     const refreshFlatList=async()=>{
 
         setIsRefreshFlatlist(true);
@@ -58,7 +83,9 @@ const HomeScreen = () => {
     }
 
     useEffect(() => {  
+        
         refreshFlatList();
+        
         return()=>{
             setCharacters([]);
             setIsRefreshFlatlist(false);
@@ -72,21 +99,36 @@ const HomeScreen = () => {
     />;
     const keyExtractor=(item) => item.id;
 
-    return(
-        <View>
-            <Text>Rick And Morty</Text>
-            <TextInput
-                style={{color:"red"}}            
-                keyboardType={"default"}
-                textContentType={"name"}
-                autoCapitalize="words"
-                placeholder={'Nombre del personaje'} //quotes are added to prevent the cursor from going to the right
-                placeholderTextColor={colorApp.ligthGray}
-                onChangeText={(value)=>filterCharacterByName(value)}
-                value={nameSearch}
-            />
-            <View style={styles.containerFlatList}>
-                <View style={styles.separator}></View>
+    return( 
+        <ImageBackground
+            source={backImage}
+            style={styles.backImage}
+        >
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <Image
+                        source={titleImage}
+                        style={styles.titleImage}
+                    />
+                    <View style={styles.containerSearch}>
+                        <Image
+                            source={search}
+                        />
+                        <TextInput
+                            style={{color:'red'}}            
+                            keyboardType={'default'}
+                            textContentType={'name'}
+                            autoCapitalize='words'
+                            placeholder={'Nombre del personaje'} 
+                            placeholderTextColor={colorApp.ligthGray}
+                            onChangeText={(value)=>filterCharacterByName(value)}
+                            value={nameSearch}
+                        />
+                    </View>
+                    
+                </View>
+                
+                <View style={styles.containerFlatList}>
                     <FlatList
                         style={{
                             flex: 1,
@@ -97,55 +139,60 @@ const HomeScreen = () => {
                         initialNumToRender={5}
                         renderItem={renderItem}
                         keyExtractor={keyExtractor}
-                        refreshing={isRefreshFlatList}
-                        onRefresh={()=>refreshFlatList()}  
-                        contentContainerStyle={{ paddingLeft: 0 }}
-                    />
-                    
-                <View style={styles.separator}></View>
+                        scrollEventThrottle={33}
+                    />                    
+                </View>
             </View>
-
-            <View style={{flexDirection: "row",justifyContent:"space-around"}}>
-                <Pressable 
-                    style={styles.nextPrevButton}
-                    onPress={prevPage}
-                >
-                    <Text>Anterior</Text>
-                </Pressable>
-                <Pressable
-                    style={styles.nextPrevButton}
-                    onPress={nextPage}
-                >
-                    <Text>Siguiente</Text>
-                </Pressable>
-            </View>           
-        </View>
+            <ButtonExplorer
+                onPressNext={nextPage}
+                onPressPrev={prevPage}
+                numberPage={numberPage.current}                
+                isLoading={isRefreshFlatList}
+            />
+                       
+        </ImageBackground>
     );
 }
 
 const styles = StyleSheet.create({
-
-    containerFlatList: {
-        flexDirection: 'column', 
-        width: Dimensions.get('window').width,
-        height: "80%", 
-        alignSelf: 'center',
-        justifyContent: 'center', 
-        borderTopColor: colorApp.apricot, 
-        borderWidth: 3, 
-        borderBottomColor: colorApp.transparent, 
-        borderLeftColor: colorApp.transparent, 
-        borderRightColor: colorApp.transparent,
+    container:{
+        flex: 1,        
+        backgroundColor: 'rgba(255,255,255,0.5)'
     },
-    separator: {
-        height: 20, 
-        margin: 5,
-    }, 
-    nextPrevButton: {
-        width: 120,
-        height: 40,
-        borderColor: colorApp.apricot,
-        borderWidth: 2
+    header: {
+        backgroundColor: colorApp.opaqueBlack,
+        flexDirection: 'column',
+        borderBottomWidth: 2, 
+        borderBottomColor: colorApp.RickAndMortyGreenBlue, 
+        borderBottomLeftRadius: 5, 
+        borderBottomRightRadius: 5
+    },
+    containerFlatList: {
+        flexDirection: 'row', 
+        width: Dimensions.get('window').width,
+        height: Dimensions.get('window').height-212,
+        alignSelf: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    backImage:{
+        flex:1, 
+        width: '100%',
+        height: '100%',        
+        resizeMode: 'cover',
+    },
+    titleImage:{
+        height: 50,
+        padding: 15,
+        resizeMode: 'contain',
+        alignSelf: 'center',
+        
+    },
+    containerSearch: {
+        marginLeft: 20,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center'
     }
 
 });
